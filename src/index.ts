@@ -13,3 +13,5 @@ app.use(express.json());
 app.use(userRouter);
 
 app.listen("3000");
+
+export default app;
