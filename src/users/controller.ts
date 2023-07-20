@@ -1,5 +1,5 @@
 import { Router } from "express";
-import { getUsers, createUser } from "./service.js";
+import { getUsers, createUser, getUserById, updateUser } from "./service.js";
 
 const userRouter = Router();
 
@@ -8,47 +8,34 @@ userRouter.get("/users", async (request, response) => {
   return response.status(200).json(users);
 });
 
+userRouter.get("/users/:id", async (request, response) => {
+  const user = await getUserById(request.params.id, response);
+  if (user?.mongoError) {
+    return response.status(user.mongoError.status).json({ ...user.mongoError });
+  }
+  return response.status(200).json(user);
+});
+
 userRouter.post("/users", async (request, response) => {
   const userCreated = await createUser(request.body, response);
 
-  if (userCreated.error) {
-    let mongoError = { ...userCreated };
-
-    if (userCreated.code == "11000") {
-      mongoError = {
-        errorMessage: "Email is already in use",
-        mongoError: { ...userCreated },
-      };
-    }
-
-    return response.status(400).json({ mongoError });
+  if (userCreated?.mongoError) {
+    return response.status(400).json({ ...userCreated.mongoError });
   }
 
   if (userCreated) return response.status(201).json(userCreated);
 });
 
+userRouter.put("/users", async (request, response) => {
+  const userUpdated = await updateUser(request.body, response);
+
+  if (userUpdated?.mongoError) {
+    return response
+      .status(userUpdated?.mongoError.status)
+      .json({ ...userUpdated.mongoError });
+  }
+
+  if (userUpdated) return response.status(200).json(userUpdated);
+});
+
 export { userRouter };
-
-// import { Router } from "express";
-// import { getUsersRoute, createUserRoute } from "./users/controller.js";
-
-// const router = Router();
-
-// router.get("/users", (request, response) => {
-//   getUsersRoute(request, response);
-// });
-
-// router.post("/users", (request, response) => {
-//   createUserRoute(request, response);
-// });
-
-// export { router };
-
-// import * as express from "express";
-// import { PersonHandler } from "./person.handler";
-// const router = express.Router();
-
-// router.route("/:id").put(PersonHandler.edit).delete(PersonHandler.remove);
-// router.route("/").get(PersonHandler.list).post(PersonHandler.add);
-
-// export default router;
