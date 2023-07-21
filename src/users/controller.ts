@@ -1,5 +1,11 @@
 import { Router } from "express";
-import { getUsers, createUser, getUserById, updateUser } from "./service.js";
+import {
+  getUsers,
+  createUser,
+  getUserById,
+  updateUser,
+  deleteUser,
+} from "./service.js";
 
 const userRouter = Router();
 
@@ -47,6 +53,27 @@ userRouter.put("/users/:id", async (request, response) => {
       message: `User ${userUpdated.email} updated with success`,
       status: 200,
     });
+  }
+});
+
+userRouter.delete("/users/:id", async (request, response) => {
+  if (!request?.params || request?.params?.id?.length != 24) {
+    return response.status(400).send({
+      errorMessage: "Requisição mal feita: Verifique os campos",
+      status: 400,
+    });
+  }
+
+  const userDeleted = await deleteUser(request.params.id);
+
+  if (userDeleted?.mongoError) {
+    return response
+      .status(userDeleted?.mongoError.status)
+      .json({ ...userDeleted.mongoError });
+  }
+
+  if (userDeleted) {
+    return response.status(204).json();
   }
 });
 

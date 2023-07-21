@@ -22,6 +22,8 @@ const getUserById = async (id) => {
     }
     return user;
   } catch (error) {
+    console.log("Error on Get user by Id: ", error);
+
     const mongoError: any = {
       mongoError: {
         ...error,
@@ -38,6 +40,8 @@ const createUser = async (userToCreate: IUser) => {
     const userCreate = await User.create(userToCreate);
     return userCreate;
   } catch (error) {
+    console.log("Error on Create: ", error);
+
     const mongoError: any = {
       mongoError: { ...error },
     };
@@ -61,17 +65,32 @@ const updateUser = async (id, userToCreate: IUser) => {
     }
     return userCreate;
   } catch (error) {
-    console.log("ERRORCODE", error);
+    console.log("Error on Update: ", error);
     const mongoError: any = {
       mongoError: { ...error },
     };
+    return mongoError;
+  }
+};
 
-    if (error.code == "11000") {
-      mongoError.mongoError.errorMessage = "Email is already in use";
+const deleteUser = async (id) => {
+  try {
+    const userCreate = await User.findOneAndDelete({ _id: id });
+    if (userCreate == null) {
+      const mongoError: any = {
+        mongoError: { errorMessage: "User Not Found", status: 404 },
+      };
+      return mongoError;
     }
+    return userCreate;
+  } catch (error) {
+    console.log("Error on Delete: ", error);
+    const mongoError: any = {
+      mongoError: { ...error },
+    };
 
     return mongoError;
   }
 };
 
-export { getUsers, createUser, getUserById, updateUser };
+export { getUsers, createUser, getUserById, updateUser, deleteUser };
