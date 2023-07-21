@@ -4,12 +4,12 @@ import { getUsers, createUser, getUserById, updateUser } from "./service.js";
 const userRouter = Router();
 
 userRouter.get("/users", async (request, response) => {
-  const users = await getUsers(request, response);
+  const users = await getUsers();
   return response.status(200).json(users);
 });
 
 userRouter.get("/users/:id", async (request, response) => {
-  const user = await getUserById(request.params.id, response);
+  const user = await getUserById(request.params.id);
   if (user?.mongoError) {
     return response.status(user.mongoError.status).json({ ...user.mongoError });
   }
@@ -17,7 +17,7 @@ userRouter.get("/users/:id", async (request, response) => {
 });
 
 userRouter.post("/users", async (request, response) => {
-  const userCreated = await createUser(request.body, response);
+  const userCreated = await createUser(request.body);
 
   if (userCreated?.mongoError) {
     return response.status(400).json({ ...userCreated.mongoError });
@@ -26,8 +26,15 @@ userRouter.post("/users", async (request, response) => {
   if (userCreated) return response.status(201).json(userCreated);
 });
 
-userRouter.put("/users", async (request, response) => {
-  const userUpdated = await updateUser(request.body, response);
+userRouter.put("/users/:id", async (request, response) => {
+  if (!request?.params || request?.params?.id?.length != 24) {
+    return response.status(400).send({
+      errorMessage: "Requisição mal feita: Verifique os campos",
+      status: 400,
+    });
+  }
+
+  const userUpdated = await updateUser(request.params.id, request.body);
 
   if (userUpdated?.mongoError) {
     return response
@@ -35,7 +42,12 @@ userRouter.put("/users", async (request, response) => {
       .json({ ...userUpdated.mongoError });
   }
 
-  if (userUpdated) return response.status(200).json(userUpdated);
+  if (userUpdated) {
+    return response.status(200).json({
+      message: `User ${userUpdated.email} updated with success`,
+      status: 200,
+    });
+  }
 });
 
 export { userRouter };

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from "./schema.js";
 interface IUser {
   name: string;
@@ -5,14 +6,14 @@ interface IUser {
   password: string;
 }
 
-const getUsers = async (request, response) => {
+const getUsers = async () => {
   const users = await User.find();
   return users;
 };
 
-const getUserById = async (request, response) => {
+const getUserById = async (id) => {
   try {
-    const user = await User.findById(request);
+    const user = await User.findById(id);
     if (user == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
@@ -21,7 +22,6 @@ const getUserById = async (request, response) => {
     }
     return user;
   } catch (error) {
-    console.log("ERROR", error);
     const mongoError: any = {
       mongoError: {
         ...error,
@@ -33,7 +33,7 @@ const getUserById = async (request, response) => {
   }
 };
 
-const createUser = async (userToCreate: IUser, response) => {
+const createUser = async (userToCreate: IUser) => {
   try {
     const userCreate = await User.create(userToCreate);
     return userCreate;
@@ -50,11 +50,18 @@ const createUser = async (userToCreate: IUser, response) => {
   }
 };
 
-const updateUser = async (userToCreate: IUser, response) => {
+const updateUser = async (id, userToCreate: IUser) => {
   try {
-    const userCreate = await User.create(userToCreate);
+    const userCreate = await User.findOneAndUpdate({ _id: id }, userToCreate);
+    if (userCreate == null) {
+      const mongoError: any = {
+        mongoError: { errorMessage: "User Not Found", status: 404 },
+      };
+      return mongoError;
+    }
     return userCreate;
   } catch (error) {
+    console.log("ERRORCODE", error);
     const mongoError: any = {
       mongoError: { ...error },
     };
