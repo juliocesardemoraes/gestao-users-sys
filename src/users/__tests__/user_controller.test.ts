@@ -1,11 +1,11 @@
-import { userRouter } from "../controller";
+import { userRouter } from "../controller.js";
 import {
   getUsers,
   createUser,
   getUserById,
   updateUser,
   deleteUser,
-} from "../service";
+} from "../service.js";
 
 jest.mock("../service");
 
@@ -36,19 +36,15 @@ describe("userRouter", () => {
           __v: 0,
         },
       ];
-      //   console.log("mockUsers", mockedUsers);
-      //   jest.spyOn(userRouter, "get").mockImplementation(async () => mockedUsers);
+      jest.spyOn(userRouter, "get").mockImplementation(async () => mockedUsers);
 
-      //   const request = {};
-      //   const response = {
-      //     status: jest.fn().mockReturnThis(),
-      //     json: jest.fn(),
-      //   };
+      const request = {};
+      const response = {
+        status: jest.fn().mockReturnThis(),
+        json: jest.fn(),
+      };
 
-      //   await userRouter.get("/users", request, response);
-      //   getUsers.mockResolvedValue(() => {
-      //     return mockedUsers;
-      //   });
+      await userRouter.get("/users", request, response);
 
       //   const request = {};
       //   const response = {
