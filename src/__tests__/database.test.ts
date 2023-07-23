@@ -1,4 +1,4 @@
-import { connectToMongo } from "../database/connect";
+import { connectToMongo } from "../database/connect.js";
 import mongoose from "mongoose";
 
 const mockMongooseConnect = jest.fn();
@@ -22,7 +22,7 @@ describe("Database connection", () => {
 
   it("should connect to the database successfully", async () => {
     jest.spyOn(mongoose, "connect").mockImplementation((uri: string): any => {
-      console.log("mockad");
+      return;
     });
 
     await connectToMongo();
