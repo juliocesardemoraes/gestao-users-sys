@@ -21,7 +21,7 @@ describe("Database connection", () => {
   });
 
   it("should connect to the database successfully", async () => {
-    jest.spyOn(mongoose, "connect").mockImplementation((uri: string): any => {
+    jest.spyOn(mongoose, "connect").mockImplementation((): any => {
       return;
     });
 
