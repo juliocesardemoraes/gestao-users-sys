@@ -9,7 +9,7 @@ import {
 
 jest.mock("../service");
 
-describe("userRouter", () => {
+describe("userController", () => {
   beforeEach(() => {
     jest.clearAllMocks();
   });
