@@ -103,7 +103,7 @@ describe("userServices", () => {
 
   describe("GET USERS", () => {
     it("should Get All Users from Mocked Database ", async () => {
-      const result = await getUsers();
+      const result = await getUsers({});
       expect(result).toHaveLength(2);
     });
 
