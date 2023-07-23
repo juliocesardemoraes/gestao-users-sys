@@ -9,7 +9,7 @@
     "build": "tsc",
     "dev": "nodemon --exec node --loader ts-node/esm src/index.ts",
     "start": "node --loader ts-node/esm src/index.ts",
-    "lint": "eslint . --ext .js,.jsx",
+    "lint": "eslint . --ext .js,.jsx,.ts,.tsx",
     "vercel-build": "echo hello",
     "prepare": "husky install"
   },

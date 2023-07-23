@@ -1,4 +1,4 @@
-import { IUser, IUserToCreate } from "./../dto.js";
+import { IUserToCreate } from "./../dto.js";
 import {
   getUsers,
   getUserById,
@@ -6,8 +6,6 @@ import {
   updateUser,
   deleteUser,
 } from "../service.js";
-import { User } from "../schema.js";
-import { MongoError } from "mongodb";
 
 const userToCreateJest = {
   name: "teste1",

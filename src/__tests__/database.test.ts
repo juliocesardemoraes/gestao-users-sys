@@ -21,6 +21,7 @@ describe("Database connection", () => {
   });
 
   it("should connect to the database successfully", async () => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     jest.spyOn(mongoose, "connect").mockImplementation((): any => {
       return;
     });
