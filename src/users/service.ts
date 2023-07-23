@@ -1,12 +1,8 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 import { User } from "./schema.js";
-interface IUser {
-  name: string;
-  email: string;
-  password: string;
-}
+import { IUserToCreate } from "./dto.js";
 
-const getUsers = async () => {
+const getUsers = async (): Promise<any> => {
   const users = await User.find();
   return users;
 };
@@ -22,8 +18,6 @@ const getUserById = async (id) => {
     }
     return user;
   } catch (error) {
-    console.log("Error on Get user by Id: ", error);
-
     const mongoError: any = {
       mongoError: {
         ...error,
@@ -35,13 +29,11 @@ const getUserById = async (id) => {
   }
 };
 
-const createUser = async (userToCreate: IUser) => {
+const createUser = async (userToCreate: IUserToCreate) => {
   try {
     const userCreate = await User.create(userToCreate);
     return userCreate;
   } catch (error) {
-    console.log("Error on Create: ", error);
-
     const mongoError: any = {
       mongoError: { ...error },
     };
@@ -54,18 +46,17 @@ const createUser = async (userToCreate: IUser) => {
   }
 };
 
-const updateUser = async (id, userToCreate: IUser) => {
+const updateUser = async (id, userToUpdate: IUserToCreate) => {
   try {
-    const userCreate = await User.findOneAndUpdate({ _id: id }, userToCreate);
-    if (userCreate == null) {
+    const userUpdate = await User.findOneAndUpdate({ _id: id }, userToUpdate);
+    if (userUpdate == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
       };
       return mongoError;
     }
-    return userCreate;
+    return userUpdate;
   } catch (error) {
-    console.log("Error on Update: ", error);
     const mongoError: any = {
       mongoError: { ...error },
     };
@@ -75,20 +66,18 @@ const updateUser = async (id, userToCreate: IUser) => {
 
 const deleteUser = async (id) => {
   try {
-    const userCreate = await User.findOneAndDelete({ _id: id });
-    if (userCreate == null) {
+    const userDeleted = await User.findOneAndDelete({ _id: id });
+    if (userDeleted == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
       };
       return mongoError;
     }
-    return userCreate;
+    return userDeleted;
   } catch (error) {
-    console.log("Error on Delete: ", error);
     const mongoError: any = {
       mongoError: { ...error },
     };
-
     return mongoError;
   }
 };
