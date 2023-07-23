@@ -12,7 +12,9 @@ const userRouter = Router();
 userRouter.get("/users", async (request, response) => {
   console.log(request.query);
   const users = await getUsers(request.query);
-  response.headers["X-Total-Count"] = users.length;
+  if (users.length) {
+    response.set("X-Total-Count", users.length);
+  }
   return response.status(200).json(users);
 });
 
