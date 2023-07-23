@@ -10,7 +10,7 @@ import {
 const userRouter = Router();
 
 userRouter.get("/users", async (request, response) => {
-  const users = await getUsers();
+  const users = await getUsers(request.query);
   return response.status(200).json(users);
 });
 

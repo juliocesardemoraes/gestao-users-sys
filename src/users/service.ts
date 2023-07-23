@@ -2,7 +2,18 @@
 import { User } from "./schema.js";
 import { IUserToCreate } from "./dto.js";
 
-const getUsers = async (): Promise<any> => {
+const getUsers = async (params): Promise<any> => {
+  if (params.range) {
+    const parsedJson = JSON.parse(params.range);
+    if (!parsedJson[1]) return;
+
+    const users = await User.find()
+      .sort({ createdAt: 1 })
+      .skip(parsedJson[0])
+      .limit(parsedJson[1]);
+    return users;
+  }
+
   const users = await User.find();
   return users;
 };
