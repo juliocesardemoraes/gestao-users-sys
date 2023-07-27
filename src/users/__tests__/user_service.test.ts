@@ -1,4 +1,4 @@
-import { IUserToCreate } from "./../dto.js";
+import { IUserToCreate } from "../dto/dto.js";
 import {
   getUsers,
   getUserById,
@@ -13,7 +13,7 @@ const userToCreateJest = {
   password: "123456",
 };
 
-jest.mock("../schema.js", () => ({
+jest.mock("../dto/schema.js", () => ({
   User: {
     find: jest.fn().mockResolvedValue([
       {

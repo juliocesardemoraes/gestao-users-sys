@@ -1,6 +1,6 @@
 import request from "supertest";
 import app from "../../index.js";
-import { IUserToCreate } from "../dto.js";
+import { IUserToCreate } from "../dto/dto.js";
 
 // Mock the getUsers function
 jest.mock("../service.js", () => ({
