@@ -5,15 +5,19 @@ import {
   getUserById,
   updateUser,
   deleteUser,
+  insertManyUsers,
+  deleteManyUsers,
 } from "./service.js";
 
 const userRouter = Router();
 
 userRouter.get("/users", async (request, response) => {
-  console.log(request.query);
   const users = await getUsers(request.query);
   if (users.length) {
     response.set("X-Total-Count", users.length);
+  } else {
+    response.set("X-Total-Count", "0");
+    return response.status(200).json([]);
   }
   return response.status(200).json(users);
 });
@@ -78,6 +82,40 @@ userRouter.delete("/users/:id", async (request, response) => {
 
   if (userDeleted) {
     return response.status(204).json();
+  }
+});
+
+userRouter.post("/users/bulkInsert", async (request, response) => {
+  const bulkInserted = await insertManyUsers();
+
+  if (bulkInserted?.mongoError) {
+    return response
+      .status(bulkInserted?.mongoError.status)
+      .json({ ...bulkInserted.mongoError });
+  }
+
+  if (bulkInserted) {
+    return response.status(200).json({
+      message: "Users properly inserted",
+      status: 200,
+    });
+  }
+});
+
+userRouter.delete("/users/delete/bulkDelete", async (request, response) => {
+  const bulkDeleted = await deleteManyUsers();
+
+  if (bulkDeleted?.mongoError) {
+    return response
+      .status(bulkDeleted?.mongoError.status)
+      .json({ ...bulkDeleted.mongoError });
+  }
+
+  if (bulkDeleted) {
+    return response.status(200).json({
+      message: "Users deleted",
+      status: 200,
+    });
   }
 });
 

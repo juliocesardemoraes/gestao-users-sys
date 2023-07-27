@@ -1,6 +1,9 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import { User } from "./schema.js";
-import { IUserToCreate } from "./dto.js";
+import { User } from "./dto/schema.js";
+// eslint-disable-next-line no-unused-vars
+import { IUser, IUserToCreate } from "./dto/dto.js";
+// eslint-disable-next-line no-unused-vars
+import { faker } from "@faker-js/faker";
 
 const getUsers = async (params): Promise<any> => {
   if (params.range) {
@@ -93,4 +96,61 @@ const deleteUser = async (id) => {
   }
 };
 
-export { getUsers, createUser, getUserById, updateUser, deleteUser };
+/**
+ * Create a bunch of users for faster development - DEV USE ONLY
+ * @returns {Array<IUser>} Array of users
+ */
+const insertManyUsers = async () => {
+  try {
+    // Get the count of documents in the User collection
+    const countQuery = await User.countDocuments({});
+    const arrayUsers = [];
+
+    for (let i = 0; i < 10; i++) {
+      const randomName = faker.person.fullName();
+      const randomEmail = faker.internet.email();
+      const randomPassword = faker.internet.password();
+      arrayUsers.push({
+        id: i + countQuery,
+        name: randomName,
+        email: randomEmail,
+        password: randomPassword,
+      });
+    }
+
+    const manyUsers = User.insertMany(arrayUsers);
+    return manyUsers;
+  } catch (error) {
+    const mongoError: any = {
+      mongoError: { ...error },
+    };
+    return mongoError;
+  }
+};
+
+/**
+ * DELETE MANY USERS - DEV USAGE ONLY
+ * @returns {Array<IUser>} Array of users
+ */
+const deleteManyUsers = async () => {
+  try {
+    // Get the count of documents in the User collection
+    const users = await User.deleteMany({});
+    return users;
+  } catch (error) {
+    const mongoError: any = {
+      mongoError: { ...error },
+    };
+    return mongoError;
+  }
+};
+
+export {
+  getUsers,
+  createUser,
+  getUserById,
+  updateUser,
+  deleteUser,
+  insertManyUsers,
+  deleteManyUsers,
+};
