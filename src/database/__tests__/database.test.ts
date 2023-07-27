@@ -1,4 +1,4 @@
-import { connectToMongo } from "../database/connect.js";
+import { connectToMongo } from "../connect.js";
 import mongoose from "mongoose";
 
 const mockMongooseConnect = jest.fn();
