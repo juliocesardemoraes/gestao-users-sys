@@ -8,6 +8,7 @@ import {
   insertManyUsers,
   deleteManyUsers,
 } from "./service.js";
+import { isNumber } from "../utils/utils.js";
 
 const userRouter = Router();
 
@@ -41,10 +42,10 @@ userRouter.post("/users", async (request, response) => {
 });
 
 userRouter.put("/users/:id", async (request, response) => {
-  if (!request?.params || request?.params?.id?.length != 24) {
-    return response.status(400).send({
-      errorMessage: "Requisição mal feita: Verifique os campos",
-      status: 400,
+  if (!request?.params.id || !isNumber(request?.params.id)) {
+    return response.status(500).send({
+      errorMessage: "Internal Server Error: reach out support",
+      status: 500,
     });
   }
 
@@ -65,10 +66,10 @@ userRouter.put("/users/:id", async (request, response) => {
 });
 
 userRouter.delete("/users/:id", async (request, response) => {
-  if (!request?.params || request?.params?.id?.length != 24) {
-    return response.status(400).send({
-      errorMessage: "Requisição mal feita: Verifique os campos",
-      status: 400,
+  if (!request?.params.id || !isNumber(request?.params.id)) {
+    return response.status(500).send({
+      errorMessage: "Internal Server Error: reach out support",
+      status: 500,
     });
   }
 
