@@ -67,14 +67,17 @@ const createUser = async (userToCreate: IUserToCreate) => {
 
 const updateUser = async (id, userToUpdate: IUserToCreate) => {
   try {
-    const userUpdate = await User.findOneAndUpdate({ id: id }, userToUpdate);
+    const userUpdate: any = await User.findOneAndUpdate(
+      { id: id },
+      userToUpdate
+    );
     if (userUpdate == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
       };
       return mongoError;
     }
-    return userUpdate;
+    return userUpdate._doc;
   } catch (error) {
     const mongoError: any = {
       mongoError: { ...error },
