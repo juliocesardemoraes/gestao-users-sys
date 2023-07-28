@@ -23,7 +23,7 @@ const getUsers = async (params): Promise<any> => {
 
 const getUserById = async (id) => {
   try {
-    const user = await User.findById(id);
+    const user = await User.findOne({ id: id });
     if (user == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
@@ -45,7 +45,12 @@ const getUserById = async (id) => {
 
 const createUser = async (userToCreate: IUserToCreate) => {
   try {
-    const userCreate = await User.create(userToCreate);
+    let countQuery = await User.countDocuments({});
+    countQuery++;
+    const userCreate = await User.create({
+      id: countQuery,
+      ...userToCreate,
+    });
     return userCreate;
   } catch (error) {
     const mongoError: any = {
@@ -53,7 +58,7 @@ const createUser = async (userToCreate: IUserToCreate) => {
     };
 
     if (error.code == "11000") {
-      mongoError.mongoError.errorMessage = "Email is already in use";
+      mongoError.mongoError.errorMessage = "Email is already in use!";
     }
 
     return mongoError;
@@ -62,7 +67,7 @@ const createUser = async (userToCreate: IUserToCreate) => {
 
 const updateUser = async (id, userToUpdate: IUserToCreate) => {
   try {
-    const userUpdate = await User.findOneAndUpdate({ _id: id }, userToUpdate);
+    const userUpdate = await User.findOneAndUpdate({ id: id }, userToUpdate);
     if (userUpdate == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
@@ -80,7 +85,7 @@ const updateUser = async (id, userToUpdate: IUserToCreate) => {
 
 const deleteUser = async (id) => {
   try {
-    const userDeleted = await User.findOneAndDelete({ _id: id });
+    const userDeleted = await User.findOneAndDelete({ id: id });
     if (userDeleted == null) {
       const mongoError: any = {
         mongoError: { errorMessage: "User Not Found", status: 404 },
