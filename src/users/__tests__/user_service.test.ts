@@ -15,26 +15,30 @@ const userToCreateJest = {
 
 jest.mock("../dto/schema.js", () => ({
   User: {
+    countDocuments: jest.fn().mockResolvedValue(1),
     find: jest.fn().mockResolvedValue([
       {
         _id: "64aab3d900eace7a20ac3318",
+        id: "1",
         name: "teste1",
         email: "teste@gmail.com",
         password: "123456",
         __v: 0,
       },
       {
-        _id: "64aab3d900eace7a20ac3340",
+        _id: "64aab3d900eace7a20ac3318",
+        id: "2",
         name: "teste",
         email: "teste2@gmail.com",
         password: "12345678",
         __v: 0,
       },
     ]),
-    findById: jest.fn().mockImplementation((id) => {
-      if (id === "64aab3d900eace7a20ac3318") {
+    findOne: jest.fn().mockImplementation(({ id: id }) => {
+      if (id == "1") {
         return {
           _id: "64aab3d900eace7a20ac3318",
+          id: "1",
           name: "teste1",
           email: "teste@gmail.com",
           password: "123456",
@@ -71,7 +75,7 @@ jest.mock("../dto/schema.js", () => ({
           ...userToUpdate,
         };
       }),
-    findOneAndDelete: jest.fn().mockImplementation(({ _id: id }) => {
+    findOneAndDelete: jest.fn().mockImplementation(({ id: id }) => {
       if (id == null) {
         return null;
       }
@@ -108,9 +112,10 @@ describe("userServices", () => {
     });
 
     it("should get one user from its id", async () => {
-      const result = await getUserById("64aab3d900eace7a20ac3318");
+      const result = await getUserById("1");
       expect(result).toStrictEqual({
         _id: "64aab3d900eace7a20ac3318",
+        id: "1",
         name: "teste1",
         email: "teste@gmail.com",
         password: "123456",
@@ -141,7 +146,12 @@ describe("userServices", () => {
   describe("Create User", () => {
     it("should create an user", async () => {
       const userCreated = await createUser(userToCreate);
-      expect(userCreated).toEqual({ _id: "any_id", ...userToCreate, __v: 1 });
+      expect(userCreated).toEqual({
+        _id: "any_id",
+        id: 2,
+        ...userToCreate,
+        __v: 1,
+      });
     });
     it("should return an error if it wasn't able to create an user", async () => {
       userToCreate.name = "mongodberror";
@@ -149,7 +159,7 @@ describe("userServices", () => {
       expect(userCreatedTryError).toEqual({
         mongoError: {
           code: "11000",
-          errorMessage: "Email is already in use",
+          errorMessage: "Email is already in use!",
           message: "Error",
         },
       });
@@ -176,7 +186,7 @@ describe("userServices", () => {
 
   describe("Update User", () => {
     it("should delete an user", async () => {
-      const userDeleted = await deleteUser("any_id");
+      const userDeleted = await deleteUser("1");
       expect(userDeleted).toEqual(userToCreateJest);
     });
     it("should return an error if it wasnt able to update an user", async () => {

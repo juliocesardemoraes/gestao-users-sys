@@ -75,7 +75,7 @@ describe("users routes", () => {
   describe("Update User", () => {
     it("should update an user ", async () => {
       const res = await request(app)
-        .put("/users/64aab3d900eace7a20ac3318")
+        .put("/users/1")
         .send({ id: 1, name: "John", email: "john@gmail.com" });
       expect(res.status).toBe(200);
     });
@@ -83,10 +83,10 @@ describe("users routes", () => {
       const res = await request(app)
         .put("/users/64aab3d900eace7a20ac")
         .send({ id: 1, name: "John", email: "john@gmail.com" });
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(500);
       expect(res.body).toStrictEqual({
-        errorMessage: "Requisição mal feita: Verifique os campos",
-        status: 400,
+        errorMessage: "Internal Server Error: reach out support",
+        status: 500,
       });
     });
 
@@ -99,19 +99,19 @@ describe("users routes", () => {
   describe("Delete User", () => {
     it("should give an error because of the faulty request", async () => {
       const res = await request(app).delete("/users/64aab3d900eace7a20ac");
-      expect(res.status).toBe(400);
+      expect(res.status).toBe(500);
       expect(res.body).toStrictEqual({
-        errorMessage: "Requisição mal feita: Verifique os campos",
-        status: 400,
+        errorMessage: "Internal Server Error: reach out support",
+        status: 500,
       });
     });
     it("should delete an user ", async () => {
-      const res = await request(app).delete("/users/64aab3d900eace7a20ac3318");
+      const res = await request(app).delete("/users/1");
       expect(res.status).toBe(204);
     });
 
     it("should give an error because of mongoose problem", async () => {
-      await request(app).delete("/users/64aab3d900eace7a20ac3err");
+      await request(app).delete("/users/1");
     });
   });
 });
