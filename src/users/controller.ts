@@ -59,6 +59,7 @@ userRouter.put("/users/:id", async (request, response) => {
 
   if (userUpdated) {
     return response.status(200).json({
+      data: { ...userUpdated },
       message: `User ${userUpdated.email} updated with success`,
       status: 200,
     });
