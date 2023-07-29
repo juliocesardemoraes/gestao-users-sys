@@ -77,6 +77,7 @@ const updateUser = async (id, userToUpdate: IUserToCreate) => {
       };
       return mongoError;
     }
+    delete userUpdate._doc._id;
     return userUpdate._doc;
   } catch (error) {
     const mongoError: any = {
